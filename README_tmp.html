@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="proactive-network-congestion-prediction--bandwidth-management-smart-network-optimization-for-enhanced-connectivity">Proactive Network Congestion Prediction &amp; Bandwidth Management (Smart Network Optimization for Enhanced Connectivity)</h1>
+<p>This project implements a machine learning system to proactively predict network congestion on a set of routers and provide automated, actionable recommendations for bandwidth allocation. It leverages XGBoost models trained on time-series network data to forecast congestion probabilities and drive a rule-based recommendation engine.</p>
+<h2 id="working-with-the-final-deliverable-of-the-repository">working with the final deliverable of the repository</h2>
+<p>the dashboard can be asscessed by the link-
+https://genesishackathon-hackstreetboys.streamlit.app/#congestion-predictions</p>
+<p>for sample csv's you can use:</p>
+<ul>
+<li>notebooks/data/model_ready_dataset_p.csv</li>
+<li>notebooks/data/model_ready_dataset_g.csv files</li>
+</ul>
+<p>and also visualize them accordingly.</p>
+<h2 id="approach-baseline">Approach (baseline)</h2>
+<ul>
+<li>Supervised <strong>classification</strong> for <em>congestion in next interval</em>: features include traffic volume, latency, bandwidth used/allocated, utilization ratio, time-of-day/week, lags, number of users, application usage and many more.</li>
+<li>Simple <strong>reallocation policy</strong>: shift bandwidth from underutilized to overutilized devices/links based on predicted risk and a utilization threshold.</li>
+</ul>
+<hr>
+<h3 id="project-goal">Project Goal</h3>
+<p>The primary objective is to move from a reactive to a <strong>proactive</strong> network management strategy. By anticipating congestion before it occurs, the system aims to:</p>
+<ul>
+<li>Improve network performance and reliability.</li>
+<li>Optimize resource allocation by adjusting bandwidth dynamically.</li>
+<li>Reduce manual intervention and operational overhead.</li>
+</ul>
+<hr>
+<h3 id="system-architecture--data-pipelines">System Architecture &amp; Data Pipelines</h3>
+<p>The project is built around two distinct data pipelines to ensure robust development, testing, and validation:</p>
+<ol>
+<li>
+<p><strong>Pipeline P (Processed Data)</strong></p>
+<ul>
+<li><strong>Source:</strong> Raw, historical log files from problem statement itself.</li>
+<li><strong>Process:</strong> The <code>cleaning_given_data.ipynb</code> notebook ingests, cleans, merges, and features-engineers this data.</li>
+<li><strong>Output:</strong> <code>model_ready_dataset_p.csv</code>. This dataset represents the merged data of all the different raw files that were given.</li>
+</ul>
+</li>
+<li>
+<p><strong>Pipeline G (Generated Data)</strong></p>
+<ul>
+<li><strong>Source:</strong> Synthetically generated from scratch.</li>
+<li><strong>Process:</strong> The <code>dataset_generator.ipynb</code> notebook creates a clean, well-structured dataset with realistic, simulated network patterns (e.g., peak business hours, evening usage spikes).</li>
+<li><strong>Output:</strong> <code>model_ready_dataset_g.csv</code>. This dataset provides a controlled environment for model testing and serves as a performance baseline.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="notebooks">Notebooks</h3>
+<p>This repository contains the following notebooks, which form the core of the project.</p>
+<h4 id="1-cleaninggivendataipynb">### 1.  <code>cleaning_given_data.ipynb</code></h4>
+<p>This notebook handles the entire ETL (Extract, Transform, Load) process for the real-world data pipeline.</p>
+<ul>
+<li><strong>Purpose</strong>: To process and merge multiple raw data sources into a single, model-ready dataset.</li>
+<li><strong>Inputs</strong>:
+<ul>
+<li><code>Router_A_router_log_15_days.csv</code></li>
+<li><code>Router_B_router_log_15_days.csv</code></li>
+<li><code>Router_C_router_log_15_days.csv</code></li>
+<li><code>application_usage.csv</code></li>
+<li><code>user_activity.csv</code></li>
+<li><code>external_factors.csv</code></li>
+<li><code>configuration_history.csv</code></li>
+</ul>
+</li>
+<li><strong>Key Steps</strong>:
+<ol>
+<li><strong>Load &amp; Consolidate</strong>: Loads all raw CSVs and combines the individual router logs.</li>
+<li><strong>Aggregate</strong>: Computes daily summaries from detailed logs (e.g., <code>total_peak_app_traffic</code>, <code>total_logins</code>, <code>Num_Config_Changes</code>).</li>
+<li><strong>Merge &amp; Clean</strong>: Merges all data frames on <code>Date</code> and/or <code>Device Name</code> and fills any resulting <code>NaN</code> values.</li>
+<li><strong>Export</strong>: Saves the final, sorted dataset as <code>final_model_ready_dataset.csv</code>.</li>
+</ol>
+</li>
+</ul>
+<h4 id="2-datasetgeneratoripynb">### 2.  <code>dataset_generator.ipynb</code></h4>
+<p>This notebook generates a high-quality, synthetic dataset for controlled model training and evaluation.</p>
+<ul>
+<li><strong>Purpose</strong>: To synthetically generate a complete and realistic dataset that mimics real-world network behavior.</li>
+<li><strong>Key Steps</strong>:
+<ol>
+<li><strong>Simulate Router Logs</strong>: Generates hourly log data, programmatically increasing traffic and latency to simulate <strong>peak business hours</strong> and <strong>evening usage spikes</strong>.</li>
+<li><strong>Simulate Daily Summaries</strong>: Creates synthetic daily data for application usage, user activity, and external events (e.g., outages, maintenance).</li>
+<li><strong>Integrate &amp; Model Events</strong>: Merges all synthetic data and simulates the impact of events (e.g., doubling latency during a network outage).</li>
+<li><strong>Create Target Variable</strong>: Applies a rule-based function (<code>create_new_flag</code>) to label congestion events.</li>
+<li><strong>Export</strong>: Saves the final dataset as <code>new_realistic_dataset_v2.csv</code>.</li>
+</ol>
+</li>
+</ul>
+<p>Of course. Here is a more detailed breakdown of the machine learning and recommendation components from the <code>model+recommendation</code> notebooks, formatted for your README file.</p>
+<hr>
+<h3 id="3-the-model--recommendation-engine">### 3. The Model &amp; Recommendation Engine</h3>
+<p>The <code>model+recommendation_p.ipynb</code> and <code>model+recommendation_g.ipynb</code> notebooks are the heart of this project. They execute a sophisticated workflow to move from historical data to future predictions and actionable advice. Here’s a detailed look at each stage.</p>
+<h4 id="1-feature-engineering-the-sliding-window"><strong>1. Feature Engineering: The Sliding Window</strong></h4>
+<p>To predict the future, the model must understand the recent past. This is achieved using a <strong>sliding window</strong> approach, which transforms the time-series data into a format that a classification model can understand.</p>
+<ul>
+<li><strong>Concept</strong>: To predict congestion for a specific hour (let's call it <code>T</code>), the model analyzes the network's behavior over the <strong>previous 12 hours</strong> (from <code>T-12</code> to <code>T-1</code>). This 12-hour block is the &quot;window.&quot;</li>
+<li><strong>Vector Construction</strong>: The function <code>create_training_samples</code> flattens this 12-hour window into a single, comprehensive feature vector. It takes 9 key metrics (like <code>Traffic Volume</code>, <code>Latency</code>, <code>Bandwidth Used</code>, <code>total_logins</code>, etc.) for each of the 3 routers at each of the 12 hours.</li>
+<li><strong>Result</strong>: This process creates one training sample with a feature vector of size $12 \text{ hours} \times 3 \text{ routers} \times 9 \text{ metrics} = 324$ features. This vector provides a rich, time-aware snapshot of the network's state leading up to a potential congestion event.</li>
+</ul>
+<h4 id="2-model-training-a-multi-model-strategy"><strong>2. Model Training: A Multi-Model Strategy</strong></h4>
+<p>Instead of a single, general-purpose model, this project uses a more effective, specialized approach.</p>
+<ul>
+<li><strong>Algorithm</strong>: The core algorithm is the <strong>XGBoost Classifier</strong>, a powerful gradient-boosting model known for its high accuracy and ability to capture complex, non-linear relationships in data.</li>
+<li><strong>Specialized Models</strong>: Three independent XGBoost models are trained—one for each router (<code>Router_A</code>, <code>Router_B</code>, and <code>Router_C</code>). This <strong>multi-model strategy</strong> allows each model to become an expert on its assigned device, learning its unique traffic patterns and congestion triggers far more effectively than a single &quot;one-size-fits-all&quot; model could.</li>
+</ul>
+<h4 id="3-prediction-from-data-to-probability"><strong>3. Prediction: From Data to Probability</strong></h4>
+<p>The <code>predict_congestion_proba</code> function operationalizes the trained models, turning historical data into a forward-looking risk assessment.</p>
+<ul>
+<li><strong>Input</strong>: A target timestamp for which a prediction is needed.</li>
+<li><strong>Process</strong>: The function automatically constructs the 12-hour feature vector preceding the target time.</li>
+<li><strong>Output</strong>: It returns a <strong>congestion probability</strong> for each router—a precise score between 0.0 (no risk) and 1.0 (very high risk). This probabilistic output is more valuable than a simple &quot;yes/no&quot; prediction because it quantifies the level of risk.</li>
+</ul>
+<h4 id="4-recommendation-engine-from-probability-to-action"><strong>4. Recommendation Engine: From Probability to Action</strong></h4>
+<p>The <code>bandwidth_recommendation</code> function acts as the final decision-logic layer, translating the model's risk scores into concrete, actionable advice. It uses a decision matrix that weighs both the <strong>congestion probability</strong> and the current <strong>bandwidth utilization</strong>.</p>
+<ul>
+<li><strong>CRITICAL (<code>prob &gt;= 0.8</code>)</strong>: The risk of congestion is imminent.
+<ul>
+<li><strong>Action</strong>: <code>increase_bandwidth</code>. The amount is aggressive (+25% to +40%) to prevent an outage.</li>
+</ul>
+</li>
+<li><strong>MODERATE RISK (<code>prob &gt;= 0.6</code>)</strong>: The system is showing signs of strain.
+<ul>
+<li><strong>Action</strong>: <code>increase_bandwidth</code> (+20%) if utilization is also high, otherwise <code>monitor_closely</code>.</li>
+</ul>
+</li>
+<li><strong>PREVENTIVE (<code>prob &gt;= 0.4</code>)</strong>: A proactive adjustment may be needed if the network is busy.
+<ul>
+<li><strong>Action</strong>: A small <code>increase_bandwidth</code> (+10%) is recommended only if utilization is already high (&gt;85%).</li>
+</ul>
+</li>
+<li><strong>OPTIMIZE (<code>prob &lt;= 0.2</code>)</strong>: The risk is very low, indicating potential over-provisioning.
+<ul>
+<li><strong>Action</strong>: If utilization is also low (&lt;40%), <code>decrease_bandwidth</code> (-15%) to improve efficiency and reduce costs.</li>
+</ul>
+</li>
+<li><strong>STABLE/NORMAL (all other cases)</strong>: The network is operating within acceptable parameters.
+<ul>
+<li><strong>Action</strong>: <code>maintain</code> current allocation or <code>monitor</code> for changes.</li>
+</ul>
+</li>
+</ul>
+<p>Of course. Here is a comprehensive <code>README.md</code> file for your GitHub repository that explains the project's inputs, outputs, and visualizations based on the provided code.</p>
+<hr>
+<h2 id="proactive-network-congestion-dashboard">Proactive Network Congestion Dashboard</h2>
+<p>In dashboard directory there is the python script of streamlit application, which defines the dashboard of project over streamlit, utilizing the models in the corresponding directories.</p>
+<hr>
+<h3 id="input-what-the-dashboard-needs">Input: What the Dashboard Needs</h3>
+<p>To function correctly, the application requires two main types of input: a primary dataset and pre-trained machine learning assets.</p>
+<h4 id="1-primary-data-source">1. Primary Data Source</h4>
+<p>The core input is a <strong>time-series dataset</strong> of network metrics, typically in a CSV file (or a Pandas DataFrame). This dataset must contain the following columns for the feature engineering process to work:</p>
+<ul>
+<li><code>Timestamp</code>: The date and time of the data record (datetime object).</li>
+<li><code>Device Name</code>: The identifier for the network device (e.g., 'Router_A', 'Router_B').</li>
+<li><code>Traffic Volume (MB/s)</code>: The volume of traffic passing through the device.</li>
+<li><code>Latency (ms)</code>: The network latency at that time.</li>
+<li><code>Bandwidth Used (MB/s)</code>: The amount of bandwidth currently in use.</li>
+<li><code>Bandwidth Allocated (MB/s)</code>: The total bandwidth allocated to the device.</li>
+<li><code>total_avg_app_traffic</code>: A feature representing the average application traffic.</li>
+<li><code>total_peak_app_traffic</code>: A feature representing the peak application traffic.</li>
+<li><code>Impact_encoded</code>: A <strong>numerical</strong> representation of congestion impact (e.g., 0 for 'None', 1 for 'Low', etc.).</li>
+<li><code>total_peak_user_usage</code>: A feature for peak usage by users.</li>
+<li><code>total_logins</code>: The total number of logins.</li>
+</ul>
+<h4 id="2-pre-trained-machine-learning-assets">2. Pre-trained Machine Learning Assets</h4>
+<p>The application relies on assets generated from a separate model training process.</p>
+<ul>
+<li><strong>XGBoost Models:</strong> For each router (<code>A</code>, <code>B</code>, <code>C</code>), a pre-trained XGBoost model must be saved as a <code>.pkl</code> file using <code>joblib</code>. These files should be named <code>modelA_p.pkl</code>, <code>modelB_p.pkl</code>, etc., and placed in a <code>models/</code> directory located one level above the script's folder.</li>
+<li><strong>Label Encoder:</strong> A fitted <code>LabelEncoder</code> object from scikit-learn, saved as <code>label_encoder_impact.pkl</code>. This is used to consistently transform the <code>Impact</code> feature. The code includes a fallback to create a default encoder if this file is missing.</li>
+</ul>
+<hr>
+<h3 id="output-what-the-dashboard-provides">Output: What the Dashboard Provides</h3>
+<p>The dashboard processes the input data and produces two key outputs: numerical predictions and actionable recommendations.</p>
+<h4 id="1-congestion-probabilities">1. Congestion Probabilities</h4>
+<p>For each router, the primary output of the machine learning model is a <strong>congestion probability</strong>. This is a floating-point number between <code>0.0</code> and <code>1.0</code>, where:</p>
+<ul>
+<li>A value close to <code>0.0</code> indicates a <strong>very low risk</strong> of congestion.</li>
+<li>A value close to <code>1.0</code> indicates a <strong>very high risk</strong> of congestion.</li>
+</ul>
+<p>These probabilities are the core data points used for all subsequent analysis and recommendations.</p>
+<h4 id="2-bandwidth-recommendations">2. Bandwidth Recommendations</h4>
+<p>The dashboard translates the raw probabilities into clear, human-readable recommendations for each router. The recommendation engine considers the congestion probability, current bandwidth utilization, and latency to generate a structured output containing:</p>
+<ul>
+<li><strong><code>action</code></strong>: A suggested course of action (e.g., <code>'increase_bandwidth'</code>, <code>'monitor_closely'</code>, <code>'decrease_bandwidth'</code>).</li>
+<li><strong><code>amount</code></strong>: The recommended change in bandwidth in MB/s. This will be positive for an increase and negative for a decrease.</li>
+<li><strong><code>reason</code></strong>: A plain-English explanation for the recommendation, providing context for the administrator (e.g., <code>'CRITICAL: High congestion probability (0.92) with 95% utilization'</code>).</li>
+</ul>
+<hr>
+<h3 id="how-it-visualizes-data">How It Visualizes Data</h3>
+<p>The dashboard uses the Plotly library to create three main interactive visualizations that allow for easy interpretation of the network's health.</p>
+<h4 id="1-traffic-volume-over-time">1. Traffic Volume Over Time</h4>
+<p>This is a <strong>line chart</strong> that plots the <code>Traffic Volume (MB/s)</code> for each router over the selected time period.</p>
+<ul>
+<li><strong>Purpose</strong>: To show trends, patterns, and spikes in network traffic.</li>
+<li><strong>Features</strong>:
+<ul>
+<li>Each router is represented by a different colored line.</li>
+<li>A <strong>vertical dashed red line</strong> is drawn on the chart to mark the specific &quot;Prediction Point,&quot; giving crucial context to the other visualizations.</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-congestion-probability">2. Congestion Probability (%)</h4>
+<p>This is a <strong>bar chart</strong> that provides an at-a-glance summary of the current congestion risk.</p>
+<ul>
+<li><strong>Purpose</strong>: To immediately identify which routers are at risk.</li>
+<li><strong>Features</strong>:
+<ul>
+<li>Each bar corresponds to a router, with the bar's height representing the predicted congestion probability (scaled to 100).</li>
+<li>The bars are <strong>dynamically color-coded</strong> based on risk level:
+<ul>
+<li><strong>&lt;span style=&quot;color:green&quot;&gt;■&lt;/span&gt; Green:</strong> Low risk (Probability &lt; 40%)</li>
+<li><strong>&lt;span style=&quot;color:orange&quot;&gt;■&lt;/span&gt; Orange:</strong> Medium risk (Probability 40% - 70%)</li>
+<li><strong>&lt;span style=&quot;color:red&quot;&gt;■&lt;/span&gt; Red:</strong> High risk (Probability &gt; 70%)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-current-bandwidth-utilization">3. Current Bandwidth Utilization</h4>
+<p>This <strong>bar chart</strong> shows how efficiently the allocated bandwidth is being used for each router.</p>
+<ul>
+<li><strong>Purpose</strong>: To diagnose if high congestion is related to high resource usage.</li>
+<li><strong>Features</strong>:
+<ul>
+<li>Each bar shows the utilization percentage ($$\frac{\text{Bandwidth Used}}{\text{Bandwidth Allocated}} \times 100$$).</li>
+<li>The bars are colored along a <strong>continuous green-yellow-red gradient</strong>, providing a smooth visual indicator of utilization levels.</li>
+</ul>
+</li>
+</ul>
+<p><strong>THE VISUALIZATION SECTION IS UNDER DEVLOPMENT RIGHT NOW.</strong></p>
+
+</body>
+</html>

@@ -3,6 +3,15 @@
 This project implements a machine learning system to proactively predict network congestion on a set of routers and provide automated, actionable recommendations for bandwidth allocation. It leverages XGBoost models trained on time-series network data to forecast congestion probabilities and drive a rule-based recommendation engine.
 
 
+## working with the final deliverable of the repository
+the dashboard can be asscessed by the link-
+https://genesishackathon-hackstreetboys.streamlit.app/#congestion-predictions
+
+for sample csv's you can use:
+* notebooks/data/model_ready_dataset_p.csv
+* notebooks/data/model_ready_dataset_g.csv files
+
+and also visualize them accordingly.
 
 ## Approach (baseline)
 
