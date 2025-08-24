@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta
 from sklearn.preprocessing import LabelEncoder
 import os
-
+from PIL import Image
 # Page config
 st.set_page_config(
     page_title="Network Congestion Dashboard",
@@ -262,7 +262,8 @@ def main():
     
     st.markdown("Upload your network traffic data to get congestion predictions and bandwidth recommendations.")
 
-    st.image("../notebooks/network_topology.png", caption="Network Topology", use_column_width=True)
+    img = Image.open("images/my_diagram.png")
+    st.image(img, caption="Processed Diagram", width=600)
     # Load models
     models = load_models()
     if models is None:
