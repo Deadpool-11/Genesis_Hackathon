@@ -260,10 +260,16 @@ def create_visualizations(df, target_time, congestion_probs, recommendations):
 def main():
     st.title("📊 Network Congestion Prediction Dashboard")
     
+    # Display network topology image just after the heading
+    image_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../notebooks/network_topology.png'))
+    if os.path.exists(image_path):
+        st.image(image_path, caption="Network Topology", use_column_width=True)
+    else:
+        st.warning(f"Network topology image not found at {image_path}")
+    
     st.markdown("Upload your network traffic data to get congestion predictions and bandwidth recommendations.")
 
-    img = Image.open("../notebooks/network_topology.png")
-    st.image(img, caption="Processed Diagram", width=600)
+   
     # Load models
     models = load_models()
     if models is None:
