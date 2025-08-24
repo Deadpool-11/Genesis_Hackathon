@@ -259,10 +259,10 @@ def create_visualizations(df, target_time, congestion_probs, recommendations):
 # Main Dashboard
 def main():
     st.title("📊 Network Congestion Prediction Dashboard")
-    st.image("../notebooks/network_topology.png", caption="Network Topology", use_column_width=True)
+    
     st.markdown("Upload your network traffic data to get congestion predictions and bandwidth recommendations.")
 
-
+    st.image("../notebooks/network_topology.png", caption="Network Topology", use_column_width=True)
     # Load models
     models = load_models()
     if models is None:
