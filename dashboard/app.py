@@ -21,7 +21,7 @@ def load_models():
     """Load pre-trained XGBoost models for each router"""
     try:
         models = {}
-        current_dir = os.path.dirname(os.path.abspath(__file__))  # dashboard foldergi
+        current_dir = os.path.dirname(os.path.abspath(__file__))  # dashboard folder
         parent_dir = os.path.dirname(current_dir)  # project_folder
         models_dir = os.path.join(parent_dir, "models")
         
@@ -51,51 +51,50 @@ def create_training_samples_single(data, target_timestamp, hours=12):
     """
     Create features for a single prediction using last 12 hours of data
     """
-    # Convert target_timestamp to datetime for arithmetic
-    if isinstance(target_timestamp, str):
-        target_dt = pd.to_datetime(target_timestamp).to_pydatetime()
-    elif isinstance(target_timestamp, pd.Timestamp):
-        target_dt = target_timestamp.to_pydatetime()
-    else:
-        target_dt = target_timestamp
-    
-    # Use Python datetime arithmetic
-    window_start_dt = target_dt - timedelta(hours=hours)
-    window_end_dt = target_dt
-    
-    # Convert back to pandas timestamps for filtering
-    window_start = pd.to_datetime(window_start_dt)
-    window_end = pd.to_datetime(window_end_dt)
-    
-    window_data = data[(data['Timestamp'] >= window_start) & (data['Timestamp'] < window_end)]
-    
-    if window_data.empty:
+    try:
+        # Ensure target_timestamp is a pandas Timestamp
+        target_ts = pd.to_datetime(target_timestamp)
+        
+        # Calculate window boundaries using pandas Timedelta
+        window_start = target_ts - pd.Timedelta(hours=hours)
+        window_end = target_ts
+        
+        # Filter data within the window
+        window_data = data[(data['Timestamp'] >= window_start) & (data['Timestamp'] < window_end)]
+        
+        if window_data.empty:
+            return None
+        
+        features = []
+        time_indexed = sorted(window_data['Timestamp'].unique())
+        
+        for ts in time_indexed:
+            ts_data = window_data[window_data['Timestamp'] == ts]
+            for router in ['Router_A', 'Router_B', 'Router_C']:
+                router_data = ts_data[ts_data['Device Name'] == router]
+                if not router_data.empty:
+                    row = router_data.iloc[0]
+                    # Convert all values to float to ensure numeric types
+                    feature_values = [
+                        float(row['Traffic Volume (MB/s)']),
+                        float(row['Latency (ms)']),
+                        float(row['Bandwidth Used (MB/s)']),
+                        float(row['Bandwidth Allocated (MB/s)']),
+                        float(row['total_avg_app_traffic']),
+                        float(row['total_peak_app_traffic']),
+                        float(row['Impact_encoded']),
+                        float(row['total_peak_user_usage']),
+                        float(row['total_logins'])
+                    ]
+                    features.extend(feature_values)
+                else:
+                    features.extend([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+        
+        return np.array(features, dtype=np.float64).reshape(1, -1)
+        
+    except Exception as e:
+        st.error(f"Error in create_training_samples_single: {str(e)}")
         return None
-    
-    features = []
-    time_indexed = sorted(window_data['Timestamp'].unique())
-    
-    for ts in time_indexed:
-        ts_data = window_data[window_data['Timestamp'] == ts]
-        for router in ['Router_A', 'Router_B', 'Router_C']:
-            router_data = ts_data[ts_data['Device Name'] == router]
-            if not router_data.empty:
-                row = router_data.iloc[0]
-                features.extend([
-                    row['Traffic Volume (MB/s)'],
-                    row['Latency (ms)'],
-                    row['Bandwidth Used (MB/s)'],
-                    row['Bandwidth Allocated (MB/s)'],
-                    row['total_avg_app_traffic'],
-                    row['total_peak_app_traffic'],
-                    row['Impact_encoded'],
-                    row['total_peak_user_usage'],
-                    row['total_logins']
-                ])
-            else:
-                features.extend([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    
-    return np.array(features).reshape(1, -1)
 
 def predict_congestion_proba(df, models, target_timestamp):
     """
@@ -223,16 +222,9 @@ def bandwidth_recommendation(window_data, congestion_probs):
 
 def create_visualizations(df, target_time, congestion_probs, recommendations):
     """Create visualizations for the dashboard"""
-    # Convert target_time to string for Plotly add_vline
-    if hasattr(target_time, "strftime"):
-        target_time_str = target_time.strftime('%Y-%m-%d %H:%M:%S')
-    else:
-        target_time_str = str(target_time)
+    # 1. Traffic Volume Over Time (without the problematic vertical line for now)
     fig_traffic = px.line(df, x='Timestamp', y='Traffic Volume (MB/s)', 
                          color='Device Name', title='Traffic Volume Over Time')
-    fig_traffic.add_vline(x=target_time_str, line_dash="dash", line_color="red", 
-                         annotation_text="Prediction Point")
-    
     
     # 2. Congestion Probabilities
     router_names = list(congestion_probs.keys())
@@ -298,32 +290,44 @@ def main():
                 st.error("❌ No valid data found. Please check your timestamp format.")
                 st.stop()
             
+            # Convert all numeric columns to proper numeric types
+            numeric_columns = [
+                'Traffic Volume (MB/s)',
+                'Latency (ms)', 
+                'Bandwidth Used (MB/s)',
+                'Bandwidth Allocated (MB/s)',
+                'total_avg_app_traffic',
+                'total_peak_app_traffic',
+                'total_peak_user_usage',
+                'total_logins'
+            ]
+            
+            for col in numeric_columns:
+                if col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors='coerce')
+                    df[col] = df[col].fillna(0)  # Fill NaN with 0
+            
             # Handle Impact column encoding
             if 'Impact' in df.columns:
-                df['Impact'] = df['Impact'].fillna('None')
+                df['Impact'] = df['Impact'].fillna('None').astype(str)
                 try:
                     df['Impact_encoded'] = le_impact.transform(df['Impact'])
-                except ValueError:
-                    # Handle unseen categories
+                except ValueError as ve:
+                    st.warning(f"Unknown Impact values found: {ve}")
+                    # Handle unseen categories by mapping to 0 (None)
                     df['Impact_encoded'] = 0
             else:
                 df['Impact_encoded'] = 0
             
-            # Get latest timestamp and create prediction window using datetime arithmetic
+            # Ensure Impact_encoded is numeric
+            df['Impact_encoded'] = pd.to_numeric(df['Impact_encoded'], errors='coerce').fillna(0)
+            
+            # Get latest timestamp and create prediction window using pandas operations
             latest_time = df['Timestamp'].max()
-            
-            # Convert to datetime for arithmetic
-            if isinstance(latest_time, pd.Timestamp):
-                latest_dt = latest_time.to_pydatetime()
-            else:
-                latest_dt = pd.to_datetime(latest_time).to_pydatetime()
-            
-            # Calculate prediction time
-            prediction_dt = latest_dt + timedelta(hours=1)
-            prediction_time = pd.to_datetime(prediction_dt)
+            prediction_time = latest_time + pd.Timedelta(hours=1)
             
             st.success(f"✅ Data loaded successfully! {len(df)} records")
-            st.info(f"📅 Latest  {latest_time}")
+            st.info(f"📅 Latest data: {latest_time}")
             st.info(f"🔮 Predicting congestion for: {prediction_time}")
             
             # Create columns for layout
@@ -350,82 +354,98 @@ def main():
             
             if st.button("🔄 Run Prediction", type="primary"):
                 with st.spinner("Running predictions..."):
-                    # Make predictions
-                    congestion_probs = predict_congestion_proba(df, models, prediction_time)
+                    try:
+                        # Make predictions
+                        congestion_probs = predict_congestion_proba(df, models, prediction_time)
 
-                    if congestion_probs is None:
-                        st.error("❌ Not enough data for prediction. Need at least 12 hours of historical data.")
-                    else:
-                        # Get window data for recommendations using datetime arithmetic
-                        window_start_dt = latest_dt - timedelta(hours=12)
-                        window_start = pd.to_datetime(window_start_dt)
-                        
-                        window_data = df[(df['Timestamp'] >= window_start) & 
-                                       (df['Timestamp'] <= latest_time)]
-                        
-                        # Get recommendations
-                        recommendations = bandwidth_recommendation(window_data, congestion_probs)
-                        
-                        # Display results
-                        st.subheader(f"🎯 Congestion Predictions for {prediction_time}")
-                        
-                        # Create metrics
-                        prob_cols = st.columns(3)
-                        for i, (router, prob) in enumerate(congestion_probs.items()):
-                            with prob_cols[i]:
-                                color = "🔴" if prob > 0.7 else "🟡" if prob > 0.4 else "🟢"
-                                st.metric(
-                                    label=f"{color} {router}",
-                                    value=f"{prob:.1%}",
-                                    delta=None
-                                )
-                        
-                        # Recommendations
-                        st.subheader("💡 Bandwidth Recommendations")
-                        for router, rec in recommendations.items():
-                            with st.expander(f"{router} - {rec['action'].replace('_', ' ').title()}"):
-                                col_a, col_b = st.columns(2)
-                                
-                                with col_a:
-                                    if rec['amount'] > 0:
-                                        st.success(f"📈 Increase by {rec['amount']} MB/s")
-                                    elif rec['amount'] < 0:
-                                        st.info(f"📉 Decrease by {abs(rec['amount'])} MB/s")
-                                    else:
-                                        st.info("➡️ Maintain current allocation")
+                        if congestion_probs is None:
+                            st.error("❌ Not enough data for prediction. Need at least 12 hours of historical data.")
+                        else:
+                            # Get window data for recommendations using pandas operations
+                            window_start = latest_time - pd.Timedelta(hours=12)
+                            window_data = df[(df['Timestamp'] >= window_start) & 
+                                           (df['Timestamp'] <= latest_time)]
+                            
+                            # Get recommendations
+                            recommendations = bandwidth_recommendation(window_data, congestion_probs)
+                            
+                            # Display results
+                            st.subheader(f"🎯 Congestion Predictions for {prediction_time}")
+                            
+                            # Create metrics
+                            prob_cols = st.columns(3)
+                            for i, (router, prob) in enumerate(congestion_probs.items()):
+                                with prob_cols[i]:
+                                    color = "🔴" if prob > 0.7 else "🟡" if prob > 0.4 else "🟢"
+                                    st.metric(
+                                        label=f"{color} {router}",
+                                        value=f"{prob:.1%}",
+                                        delta=None
+                                    )
+                            
+                            # Recommendations
+                            st.subheader("💡 Bandwidth Recommendations")
+                            for router, rec in recommendations.items():
+                                with st.expander(f"{router} - {rec['action'].replace('_', ' ').title()}"):
+                                    col_a, col_b = st.columns(2)
                                     
-                                    st.write(f"**Utilization:** {rec['utilization']:.1%}")
-                                    st.write(f"**Congestion Risk:** {rec['congestion_prob']:.1%}")
+                                    with col_a:
+                                        if rec['amount'] > 0:
+                                            st.success(f"📈 Increase by {rec['amount']} MB/s")
+                                        elif rec['amount'] < 0:
+                                            st.info(f"📉 Decrease by {abs(rec['amount'])} MB/s")
+                                        else:
+                                            st.info("➡️ Maintain current allocation")
+                                        
+                                        st.write(f"**Utilization:** {rec['utilization']:.1%}")
+                                        st.write(f"**Congestion Risk:** {rec['congestion_prob']:.1%}")
+                                    
+                                    with col_b:
+                                        st.write(f"**Current Allocated:** {rec['current_allocated']:.1f} MB/s")
+                                        st.write(f"**Current Used:** {rec['current_used']:.1f} MB/s")
+                                        st.write(f"**Reason:** {rec['reason']}")
+                            
+                            # Visualizations
+                            st.subheader("📊 Visualizations")
+                            
+                            try:
+                                fig_traffic, fig_prob, fig_util = create_visualizations(
+                                    df, latest_time, congestion_probs, recommendations
+                                )
                                 
-                                with col_b:
-                                    st.write(f"**Current Allocated:** {rec['current_allocated']:.1f} MB/s")
-                                    st.write(f"**Current Used:** {rec['current_used']:.1f} MB/s")
-                                    st.write(f"**Reason:** {rec['reason']}")
-                        
-                        # Visualizations
-                        st.subheader("📊 Visualizations")
-                        fig_traffic, fig_prob, fig_util = create_visualizations(
-                            df, latest_time, congestion_probs, recommendations
-                        )
-                        
-                        st.plotly_chart(fig_traffic, use_container_width=True)
-                        
-                        viz_col1, viz_col2 = st.columns(2)
-                        with viz_col1:
-                            st.plotly_chart(fig_prob, use_container_width=True)
-                        with viz_col2:
-                            st.plotly_chart(fig_util, use_container_width=True)
-                        
-                        # Store in session state for history
-                        if 'prediction_history' not in st.session_state:
-                            st.session_state.prediction_history = []
-                        
-                        st.session_state.prediction_history.append({
-                            'timestamp': datetime.now(),
-                            'prediction_for': prediction_time,
-                            'congestion_probs': congestion_probs,
-                            'recommendations': recommendations
-                        })
+                                st.plotly_chart(fig_traffic, use_container_width=True)
+                                
+                                viz_col1, viz_col2 = st.columns(2)
+                                with viz_col1:
+                                    st.plotly_chart(fig_prob, use_container_width=True)
+                                with viz_col2:
+                                    st.plotly_chart(fig_util, use_container_width=True)
+                                    
+                            except Exception as viz_error:
+                                st.error(f"Error creating visualizations: {str(viz_error)}")
+                                st.write("Showing basic charts without advanced features...")
+                                
+                                # Fallback: simple line chart without vertical line
+                                fig_simple = px.line(df, x='Timestamp', y='Traffic Volume (MB/s)', 
+                                                   color='Device Name', title='Traffic Volume Over Time')
+                                st.plotly_chart(fig_simple, use_container_width=True)
+                            
+                            # Store in session state for history
+                            if 'prediction_history' not in st.session_state:
+                                st.session_state.prediction_history = []
+                            
+                            st.session_state.prediction_history.append({
+                                'timestamp': datetime.now(),
+                                'prediction_for': prediction_time,
+                                'congestion_probs': congestion_probs,
+                                'recommendations': recommendations
+                            })
+                    
+                    except Exception as prediction_error:
+                        st.error(f"❌ Error during prediction: {str(prediction_error)}")
+                        st.write(f"Error type: {type(prediction_error)}")
+                        import traceback
+                        st.code(traceback.format_exc())
             
             # Prediction History
             if 'prediction_history' in st.session_state and st.session_state.prediction_history:
