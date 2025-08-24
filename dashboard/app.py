@@ -262,7 +262,7 @@ def main():
     
     st.markdown("Upload your network traffic data to get congestion predictions and bandwidth recommendations.")
 
-    img = Image.open("images/my_diagram.png")
+    img = Image.open("images/network_topology.png")
     st.image(img, caption="Processed Diagram", width=600)
     # Load models
     models = load_models()
