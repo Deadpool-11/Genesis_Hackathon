@@ -2,35 +2,6 @@
 
 This project implements a machine learning system to proactively predict network congestion on a set of routers and provide automated, actionable recommendations for bandwidth allocation. It leverages XGBoost models trained on time-series network data to forecast congestion probabilities and drive a rule-based recommendation engine.
 
-## Repository Structure
-```
-smart-network-optimization/
-├── configs/
-│   └── config.yaml
-├── data/
-│   ├── README.md
-│   ├── processed/              # generated
-│   └── raw/                    # raw dumps (optional)
-├── models/                     # saved models
-├── notebooks/
-│   └── 01_eda.ipynb
-├── outputs/                    # predictions/metrics
-├── scripts/
-│   ├── train.py
-│   └── predict.py
-├── src/
-│   ├── data/
-│   ├── models/
-│   ├── reallocator/
-│   └── utils/
-├── tests/
-│   └── test_data_loading.py
-├── .github/workflows/ci.yml
-├── .gitignore
-├── LICENSE
-└── requirements.txt
-```
-
 
 
 ## Approach (baseline)
